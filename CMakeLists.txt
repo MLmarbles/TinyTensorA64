@@ -5,13 +5,39 @@ project(TinyTensorA64)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_executable(
-    tinytensor
-    src/main.cpp
-    src/tensor.cpp
+add_library(
+    tinytensor_lib
+    src/Tensor.cpp
 )
 
 target_include_directories(
+    tinytensor_lib
+    PUBLIC include
+)
+
+add_executable(
     tinytensor
-    PRIVATE include
+    src/main.cpp
+)
+
+target_link_libraries(
+    tinytensor
+    PRIVATE tinytensor_lib
+)
+
+enable_testing()
+
+add_executable(
+    tensor_tests
+    tests/test_tensor.cpp
+)
+
+target_link_libraries(
+    tensor_tests
+    PRIVATE tinytensor_lib
+)
+
+add_test(
+    NAME TensorTests
+    COMMAND tensor_tests
 )

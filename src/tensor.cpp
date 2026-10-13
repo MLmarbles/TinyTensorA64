@@ -1,5 +1,6 @@
 #include "Tensor.hpp"
 #include <iostream>
+#include <stdexcept>
 
 Tensor::Tensor(const std::vector<std::size_t>& shape)
     : shape_(shape)
