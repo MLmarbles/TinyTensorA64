@@ -20,4 +20,7 @@ class Tensor {
         float& operator()(std::size_t row, std::size_t col);
         const float& operator()(std::size_t row, std::size_t col) const;
 
+        Tensor add(const Tensor& to_add) const;
+        Tensor matmul(const Tensor& to_mul) const;
+        void relu();
 };
