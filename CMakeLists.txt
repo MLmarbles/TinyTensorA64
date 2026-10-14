@@ -9,6 +9,7 @@ add_library(
     tinytensor_lib
     src/Tensor.cpp
     src/Linear.cpp
+    src/Model.cpp
 )
 
 target_include_directories(

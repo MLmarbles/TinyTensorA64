@@ -1,6 +1,7 @@
 #include "Tensor.hpp"
 #include <iostream>
 #include <stdexcept>
+#include <random>
 
 Tensor::Tensor(const std::vector<std::size_t>& shape)
     : shape_(shape)
@@ -87,5 +88,17 @@ void Tensor::relu()
         if (data_[i] < 0) {
             data_[i] = 0;
         }
+    }
+}
+
+void Tensor::randomize(float min, float max)
+{
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+
+    std::uniform_real_distribution<float> dist(min, max);
+
+    for (auto& value : data_) {
+        value = dist(gen);
     }
 }

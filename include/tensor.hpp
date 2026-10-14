@@ -23,4 +23,6 @@ class Tensor {
         Tensor add(const Tensor& to_add) const;
         Tensor matmul(const Tensor& to_mul) const;
         void relu();
+
+        void randomize(float min = -0.1f, float max = 0.1f);
 };
