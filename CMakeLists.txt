@@ -8,6 +8,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_library(
     tinytensor_lib
     src/Tensor.cpp
+    src/Linear.cpp
 )
 
 target_include_directories(
