@@ -34,12 +34,18 @@ void Tensor::print() const
 
 float& Tensor::operator()(std::size_t row, std::size_t col)
 {
+    if (row >= shape_[0] || col >= shape_[1]) {
+        throw std::out_of_range("tensor index out of bounds");
+    }
     std::size_t cols = shape_[1];
     return data_[row * cols + col];
 }
 
 const float& Tensor::operator()(std::size_t row, std::size_t col) const
 {
+    if (row >= shape_[0] || col >= shape_[1]) {
+        throw std::out_of_range("tensor index out of bounds");
+    }
     std::size_t cols = shape_[1];
     return data_[row * cols + col];
 }

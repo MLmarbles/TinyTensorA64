@@ -27,6 +27,16 @@ target_link_libraries(
     PRIVATE tinytensor_lib
 )
 
+add_executable(
+    matmul_benchmark
+    benchmarks/benchmark_matmul.cpp
+)
+
+target_link_libraries(
+    matmul_benchmark
+    PRIVATE tinytensor_lib
+)
+
 enable_testing()
 
 add_executable(
