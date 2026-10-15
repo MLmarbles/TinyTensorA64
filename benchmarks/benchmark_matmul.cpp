@@ -9,26 +9,31 @@ int main()
         64,
         128,
         256,
-        512
+        512,
+        1024
     };
 
+    int runs = 5;
+
     for (std::size_t size : sizes) {
-        Tensor a({size, size});
-        Tensor b({size, size});
+        long long total = 0;
+        for (int run = 0; run < runs; ++run) {
+            Tensor a({size, size});
+            Tensor b({size, size});
 
-        a.randomize();
-        b.randomize();
+            a.randomize();
+            b.randomize();
 
-        auto start = std::chrono::high_resolution_clock::now();
+            auto start = std::chrono::high_resolution_clock::now();
 
-        Tensor result = a.matmul(b);
+            Tensor result = a.matmul(b);
 
-        auto end = std::chrono::high_resolution_clock::now();
+            auto end = std::chrono::high_resolution_clock::now();
 
-        auto duration =
-            std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+            total += std::chrono::duration_cast<std::chrono::microseconds>((end - start)).count();
 
+        }
         std::cout << "Matrix size: " << size << "x" << size << '\n';
-        std::cout << "Time: " << duration.count() << "\n";
+        std::cout << "Time: " << total/runs << " average \n";
     }
 }
