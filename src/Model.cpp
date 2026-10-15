@@ -28,3 +28,13 @@ Tensor Model::forward(const Tensor& input) const
 
     return x;
 }
+
+Linear& Model::layer1()
+{
+    return layer1_;
+}
+
+Linear& Model::layer2()
+{
+    return layer2_;
+}

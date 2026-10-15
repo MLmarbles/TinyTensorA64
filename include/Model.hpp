@@ -11,4 +11,7 @@ class Model {
         Model();
 
         Tensor forward(const Tensor& input) const;
+
+        Linear& layer1();
+        Linear& layer2();
 };
