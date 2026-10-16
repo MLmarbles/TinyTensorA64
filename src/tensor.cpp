@@ -72,16 +72,15 @@ Tensor Tensor::matmul(const Tensor& to_mul) const
     }
 
     Tensor result({shape_[0], to_mul.shape_[1]});
-    
+
     for (std::size_t i = 0; i < shape_[0]; ++i) {
-        for (std::size_t j = 0; j < to_mul.shape_[1]; ++j) {
-            float sum = 0.0f;
+        for (std::size_t k = 0; k < shape_[1]; ++k) {
 
-            for (std::size_t k = 0; k < shape_[1]; ++k) {
-                sum +=  (*this)(i, k) * to_mul(k, j);
+            float a = (*this)(i, k);
+
+            for (std::size_t j = 0; j < to_mul.shape_[1]; ++j) {
+                result(i, j) += a * to_mul(k, j);
             }
-
-            result(i, j) = sum;
         }
     }
 
