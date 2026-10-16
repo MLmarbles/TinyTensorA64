@@ -87,6 +87,39 @@ Tensor Tensor::matmul(const Tensor& to_mul) const
     return result;
 } 
 
+Tensor Tensor::matmul_blocked(const Tensor& to_mul, std::size_t block_size) const
+{
+    if (shape_[1] != to_mul.shape_[0]) {
+        throw std::invalid_argument("invalid tensor sizes for matmul");
+    }
+
+    Tensor result({shape_[0], to_mul.shape_[1]});
+
+    for (std::size_t ii = 0; ii < shape_[0]; ii += block_size) {
+        for (std::size_t kk = 0; kk < shape_[1]; kk += block_size) {
+            for (std::size_t jj = 0; jj < to_mul.shape_[1]; jj += block_size) {
+
+                const std::size_t i_end = std::min(ii + block_size, shape_[0]);
+                const std::size_t k_end = std::min(kk + block_size, shape_[1]);
+                const std::size_t j_end = std::min(jj + block_size, to_mul.shape_[1]);
+
+                for (std::size_t i = ii; i < i_end; ++i) {
+                    for (std::size_t k = kk; k < k_end; ++k) {
+
+                        const float a = (*this)(i, k);
+
+                        for (std::size_t j = jj; j < j_end; ++j) {
+                            result(i, j) += a * to_mul(k, j);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return result;
+}
+
 void Tensor::relu()
 {
     for (std::size_t i = 0; i < data_.size(); ++i) {
