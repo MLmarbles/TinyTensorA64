@@ -105,3 +105,39 @@ Matrix size: 512x512
 Time: 61568 average 
 Matrix size: 1024x1024
 Time: 420167 average 
+
+Using 2 thread workers with 64 block tiling:
+Matrix size: 64x64
+Time: 796 average 
+Matrix size: 128x128
+Time: 3092 average 
+Matrix size: 256x256
+Time: 22447 average 
+Matrix size: 512x512
+Time: 182956 average 
+Matrix size: 1024x1024
+Time: 1366133 average 
+
+Using 4 thread workers with 64 block tiling:
+Matrix size: 64x64
+Time: 813 average 
+Matrix size: 128x128
+Time: 2647 average 
+Matrix size: 256x256
+Time: 14666 average 
+Matrix size: 512x512
+Time: 85653 average 
+Matrix size: 1024x1024
+Time: 674741 average 
+
+Using 8 thread workers with 64 block tiling:
+Matrix size: 64x64
+Time: 746 average 
+Matrix size: 128x128
+Time: 1722 average 
+Matrix size: 256x256
+Time: 18162 average 
+Matrix size: 512x512
+Time: 70123 average 
+Matrix size: 1024x1024
+Time: 367780 average 

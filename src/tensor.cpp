@@ -172,6 +172,72 @@ Tensor Tensor::matmul_parallel(const Tensor& to_mul, std::size_t num_threads) co
     return result;
 }
 
+Tensor Tensor::matmul_parallel_blocked(const Tensor& to_mul, std::size_t num_threads, std::size_t block_size) const
+{
+    if (shape_[1] != to_mul.shape_[0]) {
+        throw std::invalid_argument("invalid tensor sizes for matmul");
+    }
+
+    if (num_threads == 0) {
+        throw std::invalid_argument("num_threads must be greater than 0");
+    }
+
+    Tensor result({shape_[0], to_mul.shape_[1]});
+
+    struct Tile {
+        std::size_t ii;
+        std::size_t jj;
+    };
+
+    std::vector<Tile> tiles;
+
+    for (std::size_t ii = 0; ii < shape_[0]; ii += block_size) {
+        for (std::size_t jj = 0; jj < to_mul.shape_[1]; jj += block_size) {
+            tiles.push_back({ii, jj});
+        }
+    }
+
+    if (num_threads > tiles.size()) {
+        num_threads = tiles.size();
+    }
+
+    std::vector<std::thread> threads;
+
+    auto worker = [&](std::size_t thread_id) {
+        for (std::size_t tile_index = thread_id; tile_index < tiles.size(); tile_index += num_threads) {
+            const auto [ii, jj] = tiles[tile_index];
+
+            const std::size_t i_end = std::min(ii + block_size, shape_[0]);
+            const std::size_t j_end = std::min(jj + block_size, to_mul.shape_[1]);
+
+            for (std::size_t kk = 0; kk < shape_[1]; kk += block_size) {
+
+                const std::size_t k_end = std::min(kk + block_size, shape_[1]);
+
+                for (std::size_t i = ii; i < i_end; ++i) {
+                    for (std::size_t k = kk; k < k_end; ++k) {
+
+                        const float a = (*this)(i, k);
+
+                        for (std::size_t j = jj; j < j_end; ++j) {
+                            result(i, j) += a * to_mul(k, j);
+                        }
+                    }
+                }
+            }
+        }
+    };
+    for (std::size_t t = 0; t < num_threads; ++t) {
+        threads.emplace_back(worker, t);
+    }
+
+    for (auto& thread : threads) {
+        thread.join();
+    }
+
+    return result;
+}
+
 void Tensor::relu()
 {
     for (std::size_t i = 0; i < data_.size(); ++i) {

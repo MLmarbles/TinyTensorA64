@@ -26,7 +26,7 @@ int main()
 
             auto start = std::chrono::high_resolution_clock::now();
 
-            Tensor result = a.matmul_parallel(b, 8);
+            Tensor result = a.matmul_parallel_blocked(b, 8, 64);
 
             auto end = std::chrono::high_resolution_clock::now();
 
