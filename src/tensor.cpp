@@ -2,6 +2,8 @@
 #include <iostream>
 #include <stdexcept>
 #include <random>
+#include <thread>
+#include <vector>
 
 Tensor::Tensor(const std::vector<std::size_t>& shape)
     : shape_(shape)
@@ -115,6 +117,56 @@ Tensor Tensor::matmul_blocked(const Tensor& to_mul, std::size_t block_size) cons
                 }
             }
         }
+    }
+
+    return result;
+}
+
+Tensor Tensor::matmul_parallel(const Tensor& to_mul, std::size_t num_threads) const {
+    if (shape_[1] != to_mul.shape_[0]) {
+        throw std::invalid_argument("invalid tensor sizes for matmul");
+    }
+
+    if (num_threads == 0) {
+        throw std::invalid_argument("num_threads must be greater than 0");
+    }
+
+    if (num_threads > shape_[0]) {
+        num_threads = shape_[0];
+    }
+
+    Tensor result({shape_[0], to_mul.shape_[1]});
+
+    std::size_t rows_per_thread = shape_[0] / num_threads;
+    const std::size_t extra_rows = shape_[0] % num_threads;
+    std::vector<std::thread> threads;
+    std::size_t row_start = 0;
+
+    for (std::size_t t = 0; t < num_threads; ++t) {
+        std::size_t rows_for_this_thread = rows_per_thread;
+
+        if (t < extra_rows) {
+            ++rows_for_this_thread;
+        }
+
+        std::size_t row_end = row_start + rows_for_this_thread;
+
+        threads.emplace_back([&, row_start, row_end]() {
+            for (std::size_t i = row_start; i < row_end; ++i) {
+                for (std::size_t k = 0; k < shape_[1]; ++k) {
+                    const float a = (*this)(i, k);
+
+                    for (std::size_t j = 0; j < to_mul.shape_[1]; ++j) {
+                        result(i, j) += a * to_mul(k, j);
+                    }
+                }
+            }
+        });
+        row_start = row_end;
+    }
+
+    for (auto& thread : threads) {
+        thread.join();
     }
 
     return result;
