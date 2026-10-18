@@ -29,6 +29,7 @@ target_link_libraries(
 
 add_executable(
     matmul_benchmark
+    dot_benchmark
     benchmarks/benchmark_matmul.cpp
 )
 

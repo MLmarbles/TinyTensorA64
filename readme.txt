@@ -1,4 +1,4 @@
-Observed results:
+Observed results ran on Ryzen 5 5600 6 cores 12 threads:
 
 Before adjacency optimization
 Matrix size: 128x128
@@ -141,3 +141,19 @@ Matrix size: 512x512
 Time: 70123 average 
 Matrix size: 1024x1024
 Time: 367780 average 
+
+
+
+Observed results ran on Neoverse-N1 1 cores 1 threads:
+
+Using 8(1) thread workers with 64 block tiling:
+Matrix size: 64x64
+Time: 415 average
+Matrix size: 128x128
+Time: 3128 average
+Matrix size: 256x256
+Time: 24522 average
+Matrix size: 512x512
+Time: 194205 average
+Matrix size: 1024x1024
+Time: 1594193 average

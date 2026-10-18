@@ -1,4 +1,4 @@
-#include "Tensor.hpp"
+#include "tensor.hpp"
 #include "Linear.hpp"
 #include "Model.hpp"
 
