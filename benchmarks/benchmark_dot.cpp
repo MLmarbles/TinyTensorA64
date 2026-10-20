@@ -62,7 +62,6 @@ int main()
         total += std::chrono::duration_cast<std::chrono::microseconds>((end - start)).count();
     }
 
-        std::cout << "Matrix size: " << N << "x" << '\n';
         std::cout << "Scalar result: " << scalar_result << '\n';
         std::cout << "Time: " << total/runs << " average \n";
 
@@ -77,7 +76,6 @@ int main()
         total += std::chrono::duration_cast<std::chrono::microseconds>((end - start)).count();
     }
 
-        std::cout << "Matrix size: " << N << '\n';
         std::cout << "NEON result: " << neon_result << '\n';
         std::cout << "Time: " << total/runs << " average \n"; 
 }
