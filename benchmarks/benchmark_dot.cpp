@@ -52,28 +52,32 @@ int main()
     }
 
     long long total = 0;
+    float scalar_result = 0.0f;
     for (int i = 0; i < runs; ++i) {
         auto start = std::chrono::high_resolution_clock::now();
 
-        float result = dot_scalar(a, b);
+        scalar_result = dot_scalar(a, b);
 
         auto end = std::chrono::high_resolution_clock::now();
         total += std::chrono::duration_cast<std::chrono::microseconds>((end - start)).count();
     }
 
         std::cout << "Matrix size: " << N << "x" << '\n';
+        std::cout << "Scalar result: " << scalar_result << '\n';
         std::cout << "Time: " << total/runs << " average \n";
 
     total = 0;
+    float neon_result = 0.0f;
     for (int i = 0; i < runs; ++i) {
         auto start = std::chrono::high_resolution_clock::now();
 
-        float result = dot_neon(&a[0], &b[0], N);
+        neon_result = dot_neon(&a[0], &b[0], N);
 
         auto end = std::chrono::high_resolution_clock::now();
         total += std::chrono::duration_cast<std::chrono::microseconds>((end - start)).count();
     }
 
-        std::cout << "Matrix size: " << N << "x" << '\n';
+        std::cout << "Matrix size: " << N << '\n';
+        std::cout << "NEON result: " << neon_result << '\n';
         std::cout << "Time: " << total/runs << " average \n"; 
 }
