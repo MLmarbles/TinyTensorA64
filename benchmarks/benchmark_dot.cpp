@@ -64,7 +64,7 @@ int main()
         std::cout << "Matrix size: " << N << "x" << '\n';
         std::cout << "Time: " << total/runs << " average \n";
 
-    long long total = 0;
+    total = 0;
     for (int i = 0; i < runs; ++i) {
         auto start = std::chrono::high_resolution_clock::now();
 
