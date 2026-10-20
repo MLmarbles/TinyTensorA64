@@ -2,6 +2,7 @@
 #include <vector>
 #include <arm_neon.h>
 #include <iostream>
+#include <chrono>
 
 float dot_scalar(const std::vector<float>& a, const std::vector<float>& b)
 {
@@ -40,9 +41,39 @@ float dot_neon(const float* a, const float* b, std::size_t n)
 
 int main()
 {
-    std::vector<float> a = {1, 2, 3, 4};
-    std::vector<float> b = {5, 6, 7, 8};
+    const std::size_t N = 1'000'000;
+    const int runs = 100;
+    std::vector<float> a(N);
+    std::vector<float> b(N);
 
-    std::cout << dot_scalar(a, b) << '\n';
-    std::cout << dot_neon(&a[0], &b[0], a.size()) << '\n';
+    for (std::size_t i = 0; i < N; ++i) {
+        a[i] = static_cast<float>(i % 100);
+        b[i] = static_cast<float>((i + 1) % 100);
+    }
+
+    long long total = 0;
+    for (int i = 0; i < runs; ++i) {
+        auto start = std::chrono::high_resolution_clock::now();
+
+        float result = dot_scalar(a, b);
+
+        auto end = std::chrono::high_resolution_clock::now();
+        total += std::chrono::duration_cast<std::chrono::microseconds>((end - start)).count();
+    }
+
+        std::cout << "Matrix size: " << N << "x" << '\n';
+        std::cout << "Time: " << total/runs << " average \n";
+
+    long long total = 0;
+    for (int i = 0; i < runs; ++i) {
+        auto start = std::chrono::high_resolution_clock::now();
+
+        float result = dot_neon(&a[0], &b[0], N);
+
+        auto end = std::chrono::high_resolution_clock::now();
+        total += std::chrono::duration_cast<std::chrono::microseconds>((end - start)).count();
+    }
+
+        std::cout << "Matrix size: " << N << "x" << '\n';
+        std::cout << "Time: " << total/runs << " average \n"; 
 }
