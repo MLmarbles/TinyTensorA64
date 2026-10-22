@@ -155,6 +155,49 @@ Tensor Tensor::matmul_blocked(const Tensor& to_mul, std::size_t block_size) cons
     return result;
 }
 
+Tensor Tensor::matmul_blocked_neon(const Tensor& to_mul, std::size_t block_size) const
+{
+    if (shape_[1] != to_mul.shape_[0]) {
+        throw std::invalid_argument("invalid tensor sizes for matmul");
+    }
+
+    Tensor result({shape_[0], to_mul.shape_[1]});
+
+    for (std::size_t ii = 0; ii < shape_[0]; ii += block_size) {
+        for (std::size_t kk = 0; kk < shape_[1]; kk += block_size) {
+            for (std::size_t jj = 0; jj < to_mul.shape_[1]; jj += block_size) {
+
+                const std::size_t i_end = std::min(ii + block_size, shape_[0]);
+                const std::size_t k_end = std::min(kk + block_size, shape_[1]);
+                const std::size_t j_end = std::min(jj + block_size, to_mul.shape_[1]);
+
+                for (std::size_t i = ii; i < i_end; ++i) {
+                    for (std::size_t k = kk; k < k_end; ++k) {
+
+                        float32x4_t a_vec = vdupq_n_f32((*this)(i, k));
+
+                        std::size_t j = jj;
+                        for (; j+4 <= j_end; j+=4) {
+                            float32x4_t result_vec = vld1q_f32(&result(i, j));
+                            float32x4_t b_vec = vld1q_f32(&to_mul(k, j));
+
+                            result_vec = vfmaq_f32(result_vec, a_vec, b_vec);
+
+                            vst1q_f32(&result(i, j), result_vec);
+                        }
+
+                        for (; j < j_end; ++j) {
+                            result(i, j) += (*this)(i, k) * to_mul(k, j);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return result;
+}
+
 Tensor Tensor::matmul_parallel(const Tensor& to_mul, std::size_t num_threads) const {
     if (shape_[1] != to_mul.shape_[0]) {
         throw std::invalid_argument("invalid tensor sizes for matmul");
