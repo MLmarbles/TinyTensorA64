@@ -4,6 +4,7 @@
 #include <random>
 #include <thread>
 #include <vector>
+#include <arm_neon.h>
 
 Tensor::Tensor(const std::vector<std::size_t>& shape)
     : shape_(shape)
@@ -82,6 +83,38 @@ Tensor Tensor::matmul(const Tensor& to_mul) const
 
             for (std::size_t j = 0; j < to_mul.shape_[1]; ++j) {
                 result(i, j) += a * to_mul(k, j);
+            }
+        }
+    }
+
+    return result;
+} 
+
+Tensor Tensor::matmul_neon(const Tensor& to_mul) const
+{
+    if (shape_[1] != to_mul.shape_[0]) {
+        throw std::invalid_argument("invalid tensor sizes for matmul");
+    }
+
+    Tensor result({shape_[0], to_mul.shape_[1]});
+
+    for (std::size_t i = 0; i < shape_[0]; ++i) {
+        for (std::size_t k = 0; k < shape_[1]; ++k) {
+
+            float32x4_t a_vec = vdupq_n_f32((*this)(i, k));
+
+            std::size_t j = 0;
+            for (; j < to_mul.shape_[1]; ++j) {
+                float32x4_t result_vec = vld1q_f32(&result(i, j));
+                float32x4_t b_vec = vld1q_f32(&to_mul(k, j));
+
+                result_vec = vfmaq_f32(result_vec, a_vec, b_vec);
+
+                vst1q_f32(&result(i, j), result_vec);
+            }
+
+            for (; j < to_mul.shape_[1]; ++j) {
+                result(i, j) += (*this)(i, k) * to_mul(k, j);
             }
         }
     }

@@ -22,6 +22,7 @@ class Tensor {
 
         Tensor add(const Tensor& to_add) const;
         Tensor matmul(const Tensor& to_mul) const;
+        Tensor matmul_neon(const Tensor& to_mul) const;
         Tensor matmul_blocked(const Tensor& to_mul, std::size_t block_size = 32) const;
         Tensor matmul_parallel(const Tensor& to_mul, std::size_t num_threads) const;
         Tensor matmul_parallel_blocked(const Tensor& to_mul, std::size_t num_threads, std::size_t block_size) const;
