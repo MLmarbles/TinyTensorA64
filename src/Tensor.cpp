@@ -104,7 +104,7 @@ Tensor Tensor::matmul_neon(const Tensor& to_mul) const
             float32x4_t a_vec = vdupq_n_f32((*this)(i, k));
 
             std::size_t j = 0;
-            for (; j < to_mul.shape_[1]; ++j) {
+            for (; j+4 < to_mul.shape_[1]; j+=4) {
                 float32x4_t result_vec = vld1q_f32(&result(i, j));
                 float32x4_t b_vec = vld1q_f32(&to_mul(k, j));
 
