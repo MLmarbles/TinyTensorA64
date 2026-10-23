@@ -2,13 +2,13 @@ Observed results ran on Ryzen 5 5600 6 cores 12 threads:
 
 Before adjacency optimization
 Matrix size: 128x128
-Time: 2243 average 
+Time: 5928 average 
 Matrix size: 256x256
-Time: 19329 average 
+Time: 47428 average 
 Matrix size: 512x512
-Time: 227056 average 
+Time: 462950 average 
 Matrix size: 1024x1024
-Time: 3398223 average 
+Time: 7545608 average 
 
 After adjacency optimization
 Matrix size: 64x64
@@ -195,3 +195,136 @@ Neon---> Matrix size: 512x512
 Time: 126813 average
 Neon---> Matrix size: 1024x1024
 Time: 737952 average
+
+
+
+BLOCK SIZE: 16
+Default---> Matrix size: 64x64
+Time: 398 average
+Default---> Matrix size: 128x128
+Time: 2825 average
+Default---> Matrix size: 256x256
+Time: 23240 average
+Default---> Matrix size: 512x512
+Time: 198259 average
+Default---> Matrix size: 1024x1024
+Time: 1525468 average
+
+BLOCK SIZE: 32
+Default---> Matrix size: 64x64
+Time: 328 average
+Default---> Matrix size: 128x128
+Time: 2625 average
+Default---> Matrix size: 256x256
+Time: 21258 average
+Default---> Matrix size: 512x512
+Time: 170559 average
+Default---> Matrix size: 1024x1024
+Time: 1370774 average
+
+BLOCK SIZE: 64
+Default---> Matrix size: 64x64
+Time: 338 average
+Default---> Matrix size: 128x128
+Time: 2541 average
+Default---> Matrix size: 256x256
+Time: 20682 average
+Default---> Matrix size: 512x512
+Time: 177078 average
+Default---> Matrix size: 1024x1024
+Time: 1337514 average
+
+BLOCK SIZE: 128
+Default---> Matrix size: 64x64
+Time: 351 average
+Default---> Matrix size: 128x128
+Time: 2509 average
+Default---> Matrix size: 256x256
+Time: 20402 average
+Default---> Matrix size: 512x512
+Time: 164263 average
+Default---> Matrix size: 1024x1024
+Time: 1338843 average
+
+BLOCK SIZE: 256
+Default---> Matrix size: 64x64
+Time: 329 average
+Default---> Matrix size: 128x128
+Time: 2511 average
+Default---> Matrix size: 256x256
+Time: 20279 average
+Default---> Matrix size: 512x512
+Time: 162459 average
+Default---> Matrix size: 1024x1024
+Time: 1367530 average
+
+
+
+BLOCK SIZE: 16
+Neon---> Matrix size: 64x64
+Time: 218 average
+Neon---> Matrix size: 128x128
+Time: 1615 average
+Neon---> Matrix size: 256x256
+Time: 13241 average
+Neon---> Matrix size: 512x512
+Time: 117538 average
+Neon---> Matrix size: 1024x1024
+Time: 988534 average
+
+BLOCK SIZE: 32
+Neon---> Matrix size: 64x64
+Time: 181 average
+Neon---> Matrix size: 128x128
+Time: 1446 average
+Neon---> Matrix size: 256x256
+Time: 11916 average
+Neon---> Matrix size: 512x512
+Time: 97653 average
+Neon---> Matrix size: 1024x1024
+Time: 851812 average
+
+BLOCK SIZE: 64
+Neon---> Matrix size: 64x64
+Time: 197 average
+Neon---> Matrix size: 128x128
+Time: 1371 average
+Neon---> Matrix size: 256x256
+Time: 11242 average
+Neon---> Matrix size: 512x512
+Time: 97318 average
+Neon---> Matrix size: 1024x1024
+Time: 805965 average
+
+BLOCK SIZE: 128
+Neon---> Matrix size: 64x64
+Time: 191 average
+Neon---> Matrix size: 128x128
+Time: 1348 average
+Neon---> Matrix size: 256x256
+Time: 11249 average
+Neon---> Matrix size: 512x512
+Time: 91742 average
+Neon---> Matrix size: 1024x1024
+Time: 779732 average
+
+BLOCK SIZE: 256
+Neon---> Matrix size: 64x64
+Time: 173 average
+Neon---> Matrix size: 128x128
+Time: 1353 average
+Neon---> Matrix size: 256x256
+Time: 10865 average
+Neon---> Matrix size: 512x512
+Time: 90333 average
+Neon---> Matrix size: 1024x1024
+Time: 801958 average
+
+---Note---
+From the results it can be seen that generally tiling with NEON 
+performs better than without SIMD. However at larger sizes like
+1024x1024 a dropoff in performance was observed and even performed
+worse than the SIMD implementation without tiling.
+I can conclude here that the repeated calculations and 
+the cost of tiling generated too much overhead and outweighed
+the cache savings.
